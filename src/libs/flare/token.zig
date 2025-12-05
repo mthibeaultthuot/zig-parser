@@ -1,0 +1,167 @@
+const std = @import("std");
+
+pub const TokenKind = enum {
+    LeftParen,
+    RightParen,
+    LeftBrace,
+    RightBrace,
+    Comma,
+    Dot,
+    Minus,
+    Plus,
+    Semicolon,
+    Slash,
+    Star,
+    Space,
+
+    Bang,
+    BangEqual,
+    Equal,
+    EqualEqual,
+    Greater,
+    GreaterEqual,
+    Less,
+    LessEqual,
+
+    Identifier,
+    String,
+    Number,
+
+    And,
+    Class,
+    Else,
+    False,
+    For,
+    Fun,
+    If,
+    Nil,
+    Or,
+    Print,
+    Return,
+    Super,
+    This,
+    True,
+    Var,
+    While,
+    Kernel,
+    Let,
+    Error,
+    Eof,
+    NotImplemented,
+};
+
+pub const TokenType = TokenKind;
+
+pub const Token = union(TokenType) {
+    LeftParen: void,
+    RightParen: void,
+    LeftBrace: void,
+    RightBrace: void,
+    Comma: void,
+    Dot: void,
+    Minus: void,
+    Plus: void,
+    Semicolon: void,
+    Slash: void,
+    Star: void,
+    Space: void,
+    Bang: void,
+    BangEqual: void,
+    Equal: void,
+    EqualEqual: void,
+    Greater: void,
+    GreaterEqual: void,
+    Less: void,
+    LessEqual: void,
+    Identifier: []u8,
+    String: []u8,
+    Number: f64,
+    And: void,
+    Class: void,
+    Else: void,
+    False: void,
+    For: void,
+    Fun: void,
+    If: void,
+    Nil: void,
+    Or: void,
+    Print: void,
+    Return: void,
+    Super: void,
+    This: void,
+    True: void,
+    Var: void,
+    While: void,
+    Kernel: void,
+    Let: void,
+    Error: void,
+    Eof: void,
+    NotImplemented: void,
+
+    pub fn init(allocator: std.mem.Allocator, kind: TokenKind, value: ?[]const u8, n: ?f64) !Token {
+        switch (kind) {
+            .Identifier => {
+                const v = value orelse return error.InvalidIdentifier;
+                const buf = try allocator.alloc(u8, v.len);
+                @memcpy(buf, v);
+                return Token{ .Identifier = buf };
+            },
+            .String => {
+                const v = value orelse return error.InvalidString;
+                const buf = try allocator.alloc(u8, v.len);
+                @memcpy(buf, v);
+                return Token{ .String = buf };
+            },
+            .Number => return Token{ .Number = n orelse 0.0 },
+            .LeftParen => return Token{ .LeftParen = {} },
+            .RightParen => return Token{ .RightParen = {} },
+            .LeftBrace => return Token{ .LeftBrace = {} },
+            .RightBrace => return Token{ .RightBrace = {} },
+            .Comma => return Token{ .Comma = {} },
+            .Dot => return Token{ .Dot = {} },
+            .Minus => return Token{ .Minus = {} },
+            .Plus => return Token{ .Plus = {} },
+            .Semicolon => return Token{ .Semicolon = {} },
+            .Slash => return Token{ .Slash = {} },
+            .Star => return Token{ .Star = {} },
+            .Space => return Token{ .Space = {} },
+            .Bang => return Token{ .Bang = {} },
+            .BangEqual => return Token{ .BangEqual = {} },
+            .Equal => return Token{ .Equal = {} },
+            .EqualEqual => return Token{ .EqualEqual = {} },
+            .Greater => return Token{ .Greater = {} },
+            .GreaterEqual => return Token{ .GreaterEqual = {} },
+            .Less => return Token{ .Less = {} },
+            .LessEqual => return Token{ .LessEqual = {} },
+            .And => return Token{ .And = {} },
+            .Class => return Token{ .Class = {} },
+            .Else => return Token{ .Else = {} },
+            .False => return Token{ .False = {} },
+            .For => return Token{ .For = {} },
+            .Fun => return Token{ .Fun = {} },
+            .If => return Token{ .If = {} },
+            .Nil => return Token{ .Nil = {} },
+            .Or => return Token{ .Or = {} },
+            .Print => return Token{ .Print = {} },
+            .Return => return Token{ .Return = {} },
+            .Super => return Token{ .Super = {} },
+            .This => return Token{ .This = {} },
+            .True => return Token{ .True = {} },
+            .Var => return Token{ .Var = {} },
+            .While => return Token{ .While = {} },
+            .Kernel => return Token{ .Kernel = {} },
+            .Let => return Token{ .Let = {} },
+            .Error => return Token{ .Error = {} },
+            .Eof => return Token{ .Eof = {} },
+            .NotImplemented => return Token{ .NotImplemented = {} },
+        }
+    }
+
+    pub fn deinit(self: Token, allocator: std.mem.Allocator) void {
+        switch (self) {
+            .Identifier => |s| allocator.free(s),
+            .String => |s| allocator.free(s),
+            else => {},
+        }
+    }
+};
